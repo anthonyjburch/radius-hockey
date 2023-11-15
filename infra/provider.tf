@@ -5,6 +5,13 @@ terraform {
       version = "5.5.0"
     }
   }
+
+  cloud {
+    organization = "anthonyjburch"
+    workspaces {
+      name = "radius-hockey"
+    }
+  }
 }
 
 provider "google" {
