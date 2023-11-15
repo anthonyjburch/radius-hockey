@@ -19,6 +19,10 @@ locals {
     {
       "name"    = "pubsub"
       "service" = "pubsub.googleapis.com"
+    },
+    {
+      "name"    = "cloudrun"
+      "service" = "run.googleapis.com"
     }
   ]
 }
