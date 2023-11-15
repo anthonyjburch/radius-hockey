@@ -15,6 +15,6 @@ terraform {
 }
 
 provider "google" {
-  project     = "radius-hockey"
-  region      = "us-east4"
+  project = "radius-hockey"
+  region  = "us-east4"
 }
