@@ -1,23 +1,23 @@
 locals {
   required_services = [
     {
-      "name" = "firestore"
+      "name"    = "firestore"
       "service" = "firestore.googleapis.com"
     },
     {
-      "name" = "cloudbuild"
+      "name"    = "cloudbuild"
       "service" = "cloudbuild.googleapis.com"
     },
     {
-      "name" = "cloudfunctions"
+      "name"    = "cloudfunctions"
       "service" = "cloudfunctions.googleapis.com"
     },
     {
-      "name" = "logging"
+      "name"    = "logging"
       "service" = "logging.googleapis.com"
     },
     {
-      "name" = "pubsub"
+      "name"    = "pubsub"
       "service" = "pubsub.googleapis.com"
     }
   ]
