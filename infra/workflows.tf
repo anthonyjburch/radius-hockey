@@ -17,3 +17,13 @@ resource "google_workflows_workflow" "update_skater_skating_speeds" {
     updateSkaterSkatingSpeedUrl = data.google_cloudfunctions2_function.update_skater_skating_speed.url
   })
 }
+
+resource "google_workflows_workflow" "update_skater_skating_distances" {
+  name            = "updateSkaterSkatingDistances"
+  description     = "Call getSkaters function and then calls updateSkaterSkatingDistance for each skater returned. Requires [season], [stage], and [manpower] arguments"
+  service_account = var.service_account_email
+  source_contents = templatefile("./workflows/updateSkaterSkatingDistances.yml", {
+    getSkatersUrl                  = data.google_cloudfunctions2_function.get_skaters.url
+    updateSkaterSkatingDistanceUrl = data.google_cloudfunctions2_function.update_skater_skating_distance.url
+  })
+}
