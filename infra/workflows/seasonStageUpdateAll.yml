@@ -1,0 +1,36 @@
+main:
+    params: [args]
+    steps:
+      - update_skater_profiles:
+          try:
+              call: googleapis.workflowexecutions.v1.projects.locations.workflows.executions.run
+              args:
+                  workflow_id: ${updateSkaterProfilesWorkflowId}
+                  argument:
+                      season: $${args.season}
+                      stage: $${args.stage}
+          retry: $${http.default_retry}
+      - update_skater_skating_speeds:
+          try:
+            call: googleapis.workflowexecutions.v1.projects.locations.workflows.executions.run
+            args:
+              workflow_id: ${updateSkaterSkatingSpeedsWorkflowId}
+              argument:
+                season: $${args.season}
+                stage: $${args.stage}
+          retry: $${http.default_retry}
+      - update_skater_skating_distances:
+          for:
+            value: manpower
+            in: ['all', 'es', 'pp', 'pk']
+            steps:
+              - execute_skating_distance_update:
+                  try:
+                    call: googleapis.workflowexecutions.v1.projects.locations.workflows.executions.run
+                    args:
+                      workflow_id: ${updateSkaterSkatingDistancesWorkflowId}
+                      argument:
+                        season: $${args.season}
+                        stage: $${args.stage}
+                        manpower: $${manpower}
+                  retry: $${http.default_retry}
