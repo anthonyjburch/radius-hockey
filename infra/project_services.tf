@@ -23,6 +23,10 @@ locals {
     {
       "name"    = "cloudrun"
       "service" = "run.googleapis.com"
+    },
+    {
+      "name"    = "workflows"
+      "service" = "workflows.googleapis.com"
     }
   ]
 }
