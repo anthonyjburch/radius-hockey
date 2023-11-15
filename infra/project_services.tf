@@ -27,6 +27,10 @@ locals {
     {
       "name"    = "workflows"
       "service" = "workflows.googleapis.com"
+    },
+    {
+      "name"    = "artifactregistry"
+      "service" = "artifactregistry.googleapis.com"
     }
   ]
 }
