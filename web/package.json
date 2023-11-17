@@ -1,9 +1,7 @@
 {
-    "name": "fuse-angular",
+    "name": "Radius",
     "version": "18.0.0",
-    "description": "Fuse - Angular Admin Template and Starter Project",
-    "author": "https://themeforest.net/user/srcn",
-    "license": "https://themeforest.net/licenses/standard",
+    "description": "Radius Hockey Web App",
     "private": true,
     "scripts": {
         "ng": "ng",
