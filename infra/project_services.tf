@@ -31,6 +31,10 @@ locals {
     {
       "name"    = "artifactregistry"
       "service" = "artifactregistry.googleapis.com"
+    },
+    {
+      "name" = "cloudscheduler"
+      "service" = "cloudscheduler.googleapis.com"
     }
   ]
 }
