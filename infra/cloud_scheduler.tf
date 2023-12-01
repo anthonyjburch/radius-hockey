@@ -5,9 +5,9 @@ resource "google_cloud_scheduler_job" "season20232024_stageRegular_nightly_updat
   time_zone   = "Etc/GMT"
 
   http_target {
-    uri         = "https://workflowexecutions.googleapis.com/v1/${google_workflows_workflow.season_stage_update_all}/executions"
+    uri         = "https://workflowexecutions.googleapis.com/v1/${google_workflows_workflow.season_stage_update_all.id}/executions"
     http_method = "POST"
-    body        = base64encode("")
+    body        = base64encode("{\"argument\": \"{\\\"season\\\":\\\"20232024\\\", \\\"stage\\\": \\\"regular\\\"}\"}")
     oauth_token {
       scope                 = "https://www.googleapis.com/auth/cloud-platform"
       service_account_email = var.service_account_email
