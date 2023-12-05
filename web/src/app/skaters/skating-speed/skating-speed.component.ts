@@ -1,16 +1,20 @@
 import { Component, inject } from '@angular/core';
 import { Firestore, collectionData, collection, orderBy, query, limit } from '@angular/fire/firestore';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, map } from 'rxjs';
 
 interface TableConfig {
   columns: TableHeaderColumnData[];
+  primarySortColId: string;
+  primarySortDir: 'asc' | 'desc';
   resultsPerPage: number;
+  currentPage: number;
 }
 
 interface TableHeaderColumnData {
   id: string,
-  display: string
-  sort: 'asc' | 'desc' | 'none',
+  display: string,
+  defaultSort: 'asc' | 'desc',
+  defaultSecondarySortColId: string,
   elementSortProperty: string
 }
 
@@ -38,64 +42,76 @@ export class SkatingSpeedComponent {
   skatingTableElements$: Observable<SkatingTableElement[]> = new BehaviorSubject([]);
 
   tableConfig: TableConfig = {
+    currentPage: 0,
     resultsPerPage: 25,
     columns: [
       {
         id: 'skater',
         display: 'Skater',
-        sort: 'none',
+        defaultSort: 'asc',
+        defaultSecondarySortColId: 'topSpeed',
         elementSortProperty: 'lastName'
       },
       {
         id: 'team',
         display: 'Team',
-        sort: 'none',
+        defaultSort: 'asc',
+        defaultSecondarySortColId: 'topSpeed',
         elementSortProperty: 'team'
       },
       {
         id: 'pos',
         display: 'Pos.',
-        sort: 'none',
+        defaultSort: 'asc',
+        defaultSecondarySortColId: 'topSpeed',
         elementSortProperty: 'position'
       },
       {
         id: 'topSpeed',
         display: 'Top Speed',
-        sort: 'desc',
+        defaultSort: 'desc',
+        defaultSecondarySortColId: 'skater',
         elementSortProperty: 'skatingSpeed.topSpeed'
       },
       {
         id: 'twentyTwoPlus',
         display: '22 +',
-        sort: 'none',
+        defaultSort: 'desc',
+        defaultSecondarySortColId: 'skater',
         elementSortProperty: 'skatingSpeed.twentyTwoPlus'
       },
       {
         id: 'twentyToTwentyTwo',
         display: '20 - 22',
-        sort: 'none',
+        defaultSort: 'desc',
+        defaultSecondarySortColId: 'skater',
         elementSortProperty: 'skatingSpeed.twentyToTwentyTwo'
       },
       {
         id: 'eighteenToTwenty',
         display: '18 - 20',
-        sort: 'none',
+        defaultSort: 'desc',
+        defaultSecondarySortColId: 'skater',
         elementSortProperty: 'skatingSpeed.eighteenToTwenty'
       }
-    ]
+    ],
+    primarySortColId: 'topSpeed',
+    primarySortDir: 'desc'
   }
 
   ngOnInit(): void {
     this.getSkatingData();
   }
 
-  getSkatingData(): void {
-    const sortedCol = this.tableConfig.columns.filter(c => c.sort !== 'none')[0];
+  getSkatingData(afterKey: string | number | undefined = undefined): void {
+    const sortedCol = this.tableConfig.columns.filter(c => c.id === this.tableConfig.primarySortColId)[0];
+    const secondaryCol = this.tableConfig.columns.filter(c => c.id === sortedCol.defaultSecondarySortColId)[0];
 
     this.skatingTableElements$ =  collectionData(
       query(
         collection(this.firestore, 'skaters'),
-        orderBy(sortedCol.elementSortProperty, sortedCol.sort !== 'none' ? sortedCol.sort : 'desc'),
+        orderBy(sortedCol.elementSortProperty, this.tableConfig.primarySortDir),
+        orderBy(secondaryCol.elementSortProperty, secondaryCol.defaultSort),
         limit(this.tableConfig.resultsPerPage)
       ),
       { idField: 'id' }
@@ -109,23 +125,37 @@ export class SkatingSpeedComponent {
       throw Error('sortColumn called on undefined column');
     }
 
-    switch (col.sort) {
-      case 'none':
-      case 'asc':     
-        col.sort = 'desc';
-        break;
-      case 'desc':
-        col.sort = 'asc';
-        break;
+    if (col.id === this.tableConfig.primarySortColId) {
+      this.tableConfig.primarySortDir = this.tableConfig.primarySortDir !== 'asc' ? 'asc' : 'desc';
+    } else {
+      this.tableConfig.primarySortColId = col.id;
+      this.tableConfig.primarySortDir = col.defaultSort;
     }
 
-    this.tableConfig.columns.filter(c => c.id !== id).forEach(c => c.sort = 'none');
-
-    this.getSkatingData();
+    this.changePage('reset');
   }
 
   setMaxResults(max: number) {
     this.tableConfig.resultsPerPage = max;
-    this.getSkatingData();
+    this.changePage('reset');
+  }
+
+  changePage(mode: 'reset' | 'inc' | 'dec', element: SkatingTableElement | undefined = undefined) {
+    switch (mode) {
+      case 'reset':
+        this.tableConfig.currentPage = 0;
+        this.getSkatingData();
+        break;
+
+      case 'inc':
+        this.tableConfig.currentPage++;
+        console.log(element);
+        break;
+
+      case 'dec':
+        this.tableConfig.currentPage--;
+        console.log(element);
+        break;
+    }
   }
 }

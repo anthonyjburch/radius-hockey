@@ -11,9 +11,9 @@
                     <th scope="col" *ngFor="let column of tableConfig.columns">
                         <span class="text-decoration-underline cursor-pointer" (click)="sortColumn(column.id)">
                             {{column.display}}
-                            <i class="fa-solid fa-arrow-down-wide-short hidden" *ngIf="column.sort === 'none'"></i>
-                            <i class="fa-solid fa-arrow-down-wide-short" *ngIf="column.sort === 'asc'"></i>
-                            <i class="fa-solid fa-arrow-up-wide-short" *ngIf="column.sort === 'desc'"></i>
+                            <i class="fa-solid fa-arrow-down-wide-short hidden" *ngIf="column.id !== tableConfig.primarySortColId"></i>
+                            <i class="fa-solid fa-arrow-down-wide-short" *ngIf="column.id === tableConfig.primarySortColId && tableConfig.primarySortDir === 'asc'"></i>
+                            <i class="fa-solid fa-arrow-up-wide-short" *ngIf="column.id === tableConfig.primarySortColId && tableConfig.primarySortDir === 'desc'"></i>
                         </span>
                     </th>
                 </tr>
@@ -32,18 +32,37 @@
             </tbody>
         </table>
         <div class="row">
-            <div class="col-auto">
-                <div class="dropdown">
-                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        {{tableConfig.resultsPerPage}} Results per page
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><button class="btn btn-link dropdown-item" (click)="setMaxResults(25)">25</button></li>
-                        <li><button class="btn btn-link dropdown-item" (click)="setMaxResults(50)">50</button></li>
-                        <li><button class="btn btn-link dropdown-item" (click)="setMaxResults(100)">100</button></li>
-                        <li><button class="btn btn-link dropdown-item" (click)="setMaxResults(250)">250</button></li>
-                    </ul>
+            <div class="col">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                {{tableConfig.resultsPerPage}} Results per page
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><button class="btn btn-link dropdown-item" (click)="setMaxResults(25)">25</button>
+                                </li>
+                                <li><button class="btn btn-link dropdown-item" (click)="setMaxResults(50)">50</button>
+                                </li>
+                                <li><button class="btn btn-link dropdown-item" (click)="setMaxResults(100)">100</button>
+                                </li>
+                                <li><button class="btn btn-link dropdown-item" (click)="setMaxResults(250)">250</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <span>Current Page: {{this.tableConfig.currentPage}}</span>
+                    </div>
+                    <div>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-outline-secondary" (click)="changePage('dec', elements[0])"><i
+                                    class="fa-solid fa-left-long"></i> Prev</button>
+                            <button type="button" class="btn btn-outline-secondary" (click)="changePage('inc', elements[elements.length - 1])">Next <i
+                                    class="fa-solid fa-right-long"></i></button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
