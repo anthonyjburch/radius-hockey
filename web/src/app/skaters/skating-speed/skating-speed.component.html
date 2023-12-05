@@ -20,7 +20,7 @@
             </thead>
             <tbody class="table-group-divider">
                 <tr *ngFor="let element of elements; let i = index;" scope="row">
-                    <td>{{i + 1}}</td>
+                    <td>{{i + (tableConfig.resultsPerPage * tableConfig.currentPage) + 1}}</td>
                     <td>{{element.lastName}}, {{element.firstName}}</td>
                     <td>{{element.team}}</td>
                     <td>{{element.position}}</td>
@@ -53,13 +53,10 @@
                         </div>
                     </div>
                     <div>
-                        <span>Current Page: {{this.tableConfig.currentPage}}</span>
-                    </div>
-                    <div>
                         <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-outline-secondary" (click)="changePage('dec', elements[0])"><i
+                            <button type="button" class="btn btn-outline-secondary" (click)="changePage('dec', elements[0])" [disabled]="this.tableConfig.currentPage === 0"><i
                                     class="fa-solid fa-left-long"></i> Prev</button>
-                            <button type="button" class="btn btn-outline-secondary" (click)="changePage('inc', elements[elements.length - 1])">Next <i
+                            <button type="button" class="btn btn-outline-secondary" (click)="changePage('inc', elements[elements.length - 1])" [disabled]="elements.length < tableConfig.resultsPerPage">Next <i
                                     class="fa-solid fa-right-long"></i></button>
                         </div>
                     </div>

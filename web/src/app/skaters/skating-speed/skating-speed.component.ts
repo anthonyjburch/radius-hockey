@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Firestore, collectionData, collection, orderBy, query, limit } from '@angular/fire/firestore';
+import { Firestore, collectionData, collection, orderBy, query, limit, QueryConstraint, startAfter, endBefore, limitToLast } from '@angular/fire/firestore';
 import { Observable, BehaviorSubject, map } from 'rxjs';
 
 interface TableConfig {
@@ -19,12 +19,14 @@ interface TableHeaderColumnData {
 }
 
 interface SkatingTableElement {
+  [key: string]: string | number | object | undefined,
   id: string,
   firstName: string,
   lastName: string,
   position: string
   team: string,
   skatingSpeed: {
+    [key: string]: string | number | object | undefined,
     eighteenToTwenty: number,
     topSpeed: number
     twentyToTwentyTwo: number
@@ -103,19 +105,43 @@ export class SkatingSpeedComponent {
     this.getSkatingData();
   }
 
-  getSkatingData(afterKey: string | number | undefined = undefined): void {
+  getSkatingData(pageElement: SkatingTableElement | undefined = undefined, pageDir: 'inc' | 'dec' | undefined = undefined): void {
     const sortedCol = this.tableConfig.columns.filter(c => c.id === this.tableConfig.primarySortColId)[0];
     const secondaryCol = this.tableConfig.columns.filter(c => c.id === sortedCol.defaultSecondarySortColId)[0];
 
-    this.skatingTableElements$ =  collectionData(
+    const queryConstraints: QueryConstraint[] = [
+      orderBy(sortedCol.elementSortProperty, this.tableConfig.primarySortDir),
+      orderBy(secondaryCol.elementSortProperty, secondaryCol.defaultSort),
+      limit(this.tableConfig.resultsPerPage)
+    ];
+
+    if (!pageElement) {
+      queryConstraints.push(
+        limit(this.tableConfig.resultsPerPage)
+      );
+    } else {
+      const primaryPageKey = this.getPropByString(pageElement, sortedCol.elementSortProperty);
+      const secondaryPageKey = this.getPropByString(pageElement, secondaryCol.elementSortProperty);
+
+      if (pageDir === 'inc') {
+        queryConstraints.push(startAfter(primaryPageKey, secondaryPageKey));
+        queryConstraints.push(limit(this.tableConfig.resultsPerPage));
+      }
+
+      if (pageDir === 'dec') {
+        queryConstraints.push(endBefore(primaryPageKey, secondaryPageKey));
+        queryConstraints.push(limitToLast(this.tableConfig.resultsPerPage));
+      }
+    }
+
+    this.skatingTableElements$ = collectionData(
       query(
         collection(this.firestore, 'skaters'),
-        orderBy(sortedCol.elementSortProperty, this.tableConfig.primarySortDir),
-        orderBy(secondaryCol.elementSortProperty, secondaryCol.defaultSort),
-        limit(this.tableConfig.resultsPerPage)
+        ...queryConstraints
       ),
       { idField: 'id' }
     ) as Observable<SkatingTableElement[]>
+
   }
 
   sortColumn(id: string): void {
@@ -149,13 +175,32 @@ export class SkatingSpeedComponent {
 
       case 'inc':
         this.tableConfig.currentPage++;
-        console.log(element);
+        this.getSkatingData(element, mode)
         break;
 
       case 'dec':
         this.tableConfig.currentPage--;
-        console.log(element);
+        this.getSkatingData(element, mode)
         break;
     }
+  }
+
+  getPropByString(obj: any, propString: any) {
+    if (!propString)
+      return obj;
+
+    var prop, props = propString.split('.');
+
+    for (var i = 0, iLen = props.length - 1; i < iLen; i++) {
+      prop = props[i];
+
+      var candidate = obj[prop];
+      if (candidate !== undefined) {
+        obj = candidate;
+      } else {
+        break;
+      }
+    }
+    return obj[props[i]];
   }
 }
