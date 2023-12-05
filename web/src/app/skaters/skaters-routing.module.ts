@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SkatersComponent } from './skaters.component';
-import { SkatingComponent } from './skating/skating.component';
-import { ShootingComponent } from './shooting/shooting.component';
+import { SkatingDistanceComponent } from './skating-distance/skating-distance.component';
+import { SkatingSpeedComponent } from './skating-speed/skating-speed.component';
 
 const routes: Routes = [
   {
     path: '',
     component: SkatersComponent,
     children: [
-      { path: 'skating', component: SkatingComponent },
-      { path: 'shooting', component: ShootingComponent }
+      { path: 'skating-speed', component: SkatingSpeedComponent },
+      { path: 'skating-distance', component: SkatingDistanceComponent }
     ]
   }
 ];

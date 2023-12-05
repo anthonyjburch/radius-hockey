@@ -1,0 +1,59 @@
+<div class="container mt-3 mb-5">
+    <ng-container *ngIf="skatingTableElements$ | async as elements; else loading">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th colspan="5"></th>
+                    <th colspan="3" class="table-active text-center">Speed Bursts (mph)</th>
+                </tr>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col" *ngFor="let column of tableConfig.columns">
+                        <span class="text-decoration-underline cursor-pointer" (click)="sortColumn(column.id)">
+                            {{column.display}}
+                            <i class="fa-solid fa-arrow-down-wide-short hidden" *ngIf="column.sort === 'none'"></i>
+                            <i class="fa-solid fa-arrow-down-wide-short" *ngIf="column.sort === 'asc'"></i>
+                            <i class="fa-solid fa-arrow-up-wide-short" *ngIf="column.sort === 'desc'"></i>
+                        </span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                <tr *ngFor="let element of elements; let i = index;" scope="row">
+                    <td>{{i + 1}}</td>
+                    <td>{{element.lastName}}, {{element.firstName}}</td>
+                    <td>{{element.team}}</td>
+                    <td>{{element.position}}</td>
+                    <td>{{element.skatingSpeed.topSpeed}}</td>
+                    <td>{{element.skatingSpeed.twentyTwoPlus}}</td>
+                    <td>{{element.skatingSpeed.twentyToTwentyTwo}}</td>
+                    <td>{{element.skatingSpeed.eighteenToTwenty}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col-auto">
+                <div class="dropdown">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        {{tableConfig.resultsPerPage}} Results per page
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><button class="btn btn-link dropdown-item" (click)="setMaxResults(25)">25</button></li>
+                        <li><button class="btn btn-link dropdown-item" (click)="setMaxResults(50)">50</button></li>
+                        <li><button class="btn btn-link dropdown-item" (click)="setMaxResults(100)">100</button></li>
+                        <li><button class="btn btn-link dropdown-item" (click)="setMaxResults(250)">250</button></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-template #loading>
+        <div class="position-absolute top-50 start-50">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </ng-template>
+</div>
