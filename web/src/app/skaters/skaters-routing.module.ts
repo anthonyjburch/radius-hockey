@@ -10,7 +10,8 @@ const routes: Routes = [
     component: SkatersComponent,
     children: [
       { path: 'skating-speed', component: SkatingSpeedComponent },
-      { path: 'skating-distance', component: SkatingDistanceComponent }
+      { path: 'skating-distance', component: SkatingDistanceComponent },
+      { path: '**', redirectTo: 'skating-speed'}
     ]
   }
 ];
