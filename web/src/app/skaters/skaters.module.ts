@@ -3,15 +3,14 @@ import { CommonModule } from '@angular/common';
 
 import { SkatersRoutingModule } from './skaters-routing.module';
 import { SkatersComponent } from './skaters.component';
-import { SkatingComponent } from './skating/skating.component';
-import { ShootingComponent } from './shooting/shooting.component';
-
+import { SkatingDistanceComponent } from './skating-distance/skating-distance.component';
+import { SkatingSpeedComponent } from './skating-speed/skating-speed.component';
 
 @NgModule({
   declarations: [
     SkatersComponent,
-    SkatingComponent,
-    ShootingComponent
+    SkatingDistanceComponent,
+    SkatingSpeedComponent,
   ],
   imports: [
     CommonModule,
