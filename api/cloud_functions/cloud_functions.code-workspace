@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "getSkaters"
+		},
+		{
+			"path": "updateSkaterProfile"
+		},
+		{
+			"path": "updateSkaterSkatingDistance"
+		},
+		{
+			"path": "updateSkaterSkatingSpeed"
+		},
+		{
+			"path": "updateSkaterProfile_v2"
+		}
+	]
+}

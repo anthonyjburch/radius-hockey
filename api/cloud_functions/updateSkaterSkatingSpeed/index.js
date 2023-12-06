@@ -74,7 +74,7 @@ exports.function = async (req, res) => {
                 return;
             }
         }
-
+        
         res.status(500).send({
             season: season,
             stage: stage,

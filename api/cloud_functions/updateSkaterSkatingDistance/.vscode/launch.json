@@ -1,0 +1,16 @@
+{
+  "configurations": [
+    {
+      "name": "Deploy Cloud Function",
+      "type": "cloudcode.cloudfunctions",
+      "request": "launch",
+      "functionName": "updateSkaterSkatingDistance",
+      "region": "us-east4",
+      "gen": "GEN_2",
+      "revision": "updateskaterskatingdistance-00001-jak",
+      "entryPoint": "function",
+      "runtime": "nodejs20",
+      "testInput": ""
+    }
+  ]
+}
