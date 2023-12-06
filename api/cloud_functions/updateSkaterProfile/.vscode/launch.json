@@ -1,16 +1,16 @@
 {
-  "configurations": [
-    {
-      "name": "Deploy Cloud Function",
-      "type": "cloudcode.cloudfunctions",
-      "request": "launch",
-      "functionName": "updateSkaterProfile",
-      "region": "us-east4",
-      "gen": "GEN_2",
-      "revision": "updateskaterprofile-00001-koy",
-      "entryPoint": "function",
-      "runtime": "nodejs20",
-      "testInput": ""
-    }
-  ]
-}
+    "configurations": [
+      {
+        "name": "Deploy Cloud Function",
+        "type": "cloudcode.cloudfunctions",
+        "request": "launch",
+        "functionName": "updateSkaterProfile",
+        "region": "us-east4",
+        "gen": "GEN_2",
+        "revision": "updateskaterprofile-00001-koy",
+        "entryPoint": "function",
+        "runtime": "nodejs20",
+        "testInput": ""
+      }
+    ]
+  }

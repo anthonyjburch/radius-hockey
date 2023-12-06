@@ -62,13 +62,27 @@ exports.function = async (req, res) => {
                     projectId: process.env.HOST_PROJECT
                 });
 
-                await db.collection('skaters')
-                    .doc(`${season}-${stage}-${id}`)
-                    .set({ skatingSpeed: responseObject }, { merge: true });
+                const profileRef = db.collection('skater-profiles').doc(`${season}-${stage}-${id}`);
+                const profileSnap = await profileRef.get();
 
+                if (!profileSnap.exists) {
+                    res.status(500).send(`Couldn't find profile: ${season}-${stage}-${id}`);
+                    return;
+                }
+
+                const profile = profileSnap.data();
+
+                responseObject.firstName = profile.firstName;
+                responseObject.lastName = profile.lastName;
+                responseObject.position = profile.position;
+                responseObject.team = profile.team;
                 responseObject.playerId = id;
                 responseObject.season = season;
                 responseObject.stage = stage;
+
+                await db.collection('skater-skating-speeds')
+                    .doc(`${season}-${stage}-${id}`)
+                    .set(responseObject, { merge: true});
 
                 res.status(200).send(responseObject);
                 return;

@@ -7,7 +7,7 @@
       "functionName": "updateSkaterSkatingSpeed",
       "region": "us-east4",
       "gen": "GEN_2",
-      "revision": "updateskaterskatingspeed-00001-pan",
+      "revision": "updateskaterskatingspeed-00002-moq",
       "entryPoint": "function",
       "runtime": "nodejs20",
       "testInput": ""
