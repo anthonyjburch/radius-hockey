@@ -11,9 +11,6 @@
 		},
 		{
 			"path": "updateSkaterSkatingSpeed"
-		},
-		{
-			"path": "updateSkaterProfile_v2"
 		}
 	]
 }
