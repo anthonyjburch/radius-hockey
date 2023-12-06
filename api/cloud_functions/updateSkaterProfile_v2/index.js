@@ -42,7 +42,7 @@ exports.function = async (req, res) => {
                 projectId: process.env.HOST_PROJECT
             });
 
-            await db.collection('skaters')
+            await db.collection('skater-profiles')
                     .doc(`${season}-${stage}-${id}`)
                     .set(data.player, { merge: true});
 

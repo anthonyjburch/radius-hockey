@@ -19,7 +19,7 @@ exports.function = async (req, res) => {
         }
     };
 
-
+    
     const ws = new WebSocket('wss://edge.nhl.com');
 
     ws.onmessage = (msg) => {

@@ -1,0 +1,16 @@
+{
+  "configurations": [
+    {
+      "name": "Deploy Cloud Function",
+      "type": "cloudcode.cloudfunctions",
+      "request": "launch",
+      "functionName": "getSkaters",
+      "region": "us-east4",
+      "gen": "GEN_2",
+      "revision": "getskaters-00002-fic",
+      "entryPoint": "function",
+      "runtime": "nodejs20",
+      "testInput": ""
+    }
+  ]
+}
