@@ -1,8 +1,67 @@
 <div class="container mt-3 mb-5">
-
-    <ng-container *ngIf="elements$ | async as elements; else loading">
-        <div *ngFor="let element of elements">
-            {{element.lastName}}
+    <ng-container *ngIf="elements.length; else loading">
+        <div class="table-responsive-md">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th colspan="5"></th>
+                        <th colspan="3" class="table-active text-center">Speed Bursts (mph)</th>
+                    </tr>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col" *ngFor="let column of tableConfig.columns">
+                            <span class="text-decoration-underline cursor-pointer" (click)="sortData(column)">
+                                {{column.display}}
+                            </span>
+                            <ng-container *ngIf="column.id !== tableConfig.sortedColumnId">
+                                <i class="fa-solid fa-arrow-down-wide-short hidden"></i>
+                            </ng-container>
+                            <ng-container *ngIf="column.id === tableConfig.sortedColumnId && tableConfig.sortedColumnDir === 'asc'">
+                                <i class="fa-solid fa-arrow-up-short-wide"></i>
+                            </ng-container>
+                            <ng-container *ngIf="column.id === tableConfig.sortedColumnId && tableConfig.sortedColumnDir === 'desc'">
+                                <i class="fa-solid fa-arrow-down-wide-short"></i>
+                            </ng-container>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">'
+                    <tr *ngFor="let element of elements; let i = index;" scope="row">
+                        <ng-container *ngIf="i < tableConfig.resultsPerPage">
+                            <td>{{i + 1}}</td>
+                            <td>{{element.lastName}}, {{element.firstName}}</td>
+                            <td>{{element.team}}</td>
+                            <td>{{element.position}}</td>
+                            <td>{{element.topSpeed}}</td>
+                            <td>{{element.twentyTwoPlus}}</td>
+                            <td>{{element.twentyToTwentyTwo}}</td>
+                            <td>{{element.eighteenToTwenty}}</td>
+                        </ng-container>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="d-flex justify-content-between">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            {{tableConfig.resultsPerPage}} Results per page
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><button class="btn btn-link dropdown-item" (click)="tableConfig.resultsPerPage = 25">25</button>
+                            </li>
+                            <li><button class="btn btn-link dropdown-item" (click)="tableConfig.resultsPerPage = 50">50</button>
+                            </li>
+                            <li><button class="btn btn-link dropdown-item" (click)="tableConfig.resultsPerPage = 100">100</button>
+                            </li>
+                            <li><button class="btn btn-link dropdown-item" (click)="tableConfig.resultsPerPage = 250">250</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </ng-container>
 
