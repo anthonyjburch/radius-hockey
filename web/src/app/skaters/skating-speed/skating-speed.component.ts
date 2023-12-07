@@ -17,7 +17,8 @@ interface TableElement {
 
 interface TableColumn {
   id: string,
-  display: string,
+  displayText: string,
+  displayMinWidth: number,
   defaultSortDir: 'asc' | 'desc',
   sortedElement: string,
 }
@@ -47,43 +48,50 @@ export class SkatingSpeedComponent implements OnInit {
     columns: [
       {
         id: 'skater',
-        display: 'Skater',
+        displayText: 'Skater',
+        displayMinWidth: 150,
         defaultSortDir: 'asc',
         sortedElement: 'lastName',
       },
       {
         id: 'team',
-        display: 'Team',
+        displayText: 'Team',
+        displayMinWidth: 100,
         defaultSortDir: 'asc',
         sortedElement: 'team',
       },
       {
         id: 'pos',
-        display: 'Pos.',
+        displayText: 'Pos.',
+        displayMinWidth: 100,
         defaultSortDir: 'asc',
         sortedElement: 'position',
       },
       {
         id: 'topSpeed',
-        display: 'Top Speed',
+        displayText: 'Top Speed',
+        displayMinWidth: 125,
         defaultSortDir: 'desc',
         sortedElement: 'topSpeed',
       },
       {
         id: 'twentyTwoPlus',
-        display: '22 +',
+        displayText: '22 +',
+        displayMinWidth: 100,
         defaultSortDir: 'desc',
         sortedElement: 'twentyTwoPlus',
       },
       {
         id: 'twentyToTwentyTwo',
-        display: '20 - 22',
+        displayText: '20 - 22',
+        displayMinWidth: 100,
         defaultSortDir: 'desc',
         sortedElement: 'twentyToTwentyTwo',
       },
       {
         id: 'eighteenToTwenty',
-        display: '18 - 20',
+        displayText: '18 - 20',
+        displayMinWidth: 100,
         defaultSortDir: 'desc',
         sortedElement: 'eighteenToTwenty',
       }
