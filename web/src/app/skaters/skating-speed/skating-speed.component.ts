@@ -1,37 +1,33 @@
-import { Component, inject } from '@angular/core';
-import { Firestore, collectionData, collection, orderBy, query, limit, QueryConstraint, startAfter, endBefore, limitToLast } from '@angular/fire/firestore';
-import { Observable, BehaviorSubject, map } from 'rxjs';
+import { Component, OnDestroy, OnInit, inject } from "@angular/core";
+import { Firestore, collectionData, orderBy } from "@angular/fire/firestore";
+import { collection, query } from "@firebase/firestore";
+import { BehaviorSubject, Observable } from "rxjs";
 
-interface TableConfig {
-  columns: TableHeaderColumnData[];
-  primarySortColId: string;
-  primarySortDir: 'asc' | 'desc';
-  resultsPerPage: number;
-  currentPage: number;
-}
-
-interface TableHeaderColumnData {
-  id: string,
-  display: string,
-  defaultSort: 'asc' | 'desc',
-  defaultSecondarySortColId: string,
-  elementSortProperty: string
-}
-
-interface SkatingTableElement {
-  [key: string]: string | number | object | undefined,
-  id: string,
+interface TableElement {
+  [key: string]: string | number,
   firstName: string,
   lastName: string,
-  position: string
+  position: string,
   team: string,
-  skatingSpeed: {
-    [key: string]: string | number | object | undefined,
-    eighteenToTwenty: number,
-    topSpeed: number
-    twentyToTwentyTwo: number
-    twentyTwoPlus: number
-  }
+  topSpeed: number,
+  twentyTwoPlus: number
+  twentyToTwentyTwo: number,
+  eighteenToTwenty: number
+}
+
+interface TableColumn {
+  id: string,
+  display: string,
+  defaultSortDir: 'asc' | 'desc',
+  sortedElement: string,
+}
+
+interface TableConfig {
+  columns: TableColumn[],
+  sortedColumnId: string,
+  sortedColumnDir: 'asc' | 'desc',
+  resultsPerPage: number,
+  currentPage: number
 }
 
 @Component({
@@ -39,168 +35,87 @@ interface SkatingTableElement {
   templateUrl: './skating-speed.component.html',
   styleUrls: ['./skating-speed.component.scss']
 })
-export class SkatingSpeedComponent {
+export class SkatingSpeedComponent implements OnInit {
   private firestore: Firestore = inject(Firestore);
-  skatingTableElements$: Observable<SkatingTableElement[]> = new BehaviorSubject([]);
-
+  elements$: Observable<TableElement[]> = new BehaviorSubject([]);
+  elements: TableElement[] = [];
   tableConfig: TableConfig = {
-    currentPage: 0,
     resultsPerPage: 25,
+    currentPage: 0,
+    sortedColumnId: 'topSpeed',
+    sortedColumnDir: 'desc',
     columns: [
       {
         id: 'skater',
         display: 'Skater',
-        defaultSort: 'asc',
-        defaultSecondarySortColId: 'topSpeed',
-        elementSortProperty: 'lastName'
+        defaultSortDir: 'asc',
+        sortedElement: 'lastName',
       },
       {
         id: 'team',
         display: 'Team',
-        defaultSort: 'asc',
-        defaultSecondarySortColId: 'topSpeed',
-        elementSortProperty: 'team'
+        defaultSortDir: 'asc',
+        sortedElement: 'team',
       },
       {
         id: 'pos',
         display: 'Pos.',
-        defaultSort: 'asc',
-        defaultSecondarySortColId: 'topSpeed',
-        elementSortProperty: 'position'
+        defaultSortDir: 'asc',
+        sortedElement: 'position',
       },
       {
         id: 'topSpeed',
         display: 'Top Speed',
-        defaultSort: 'desc',
-        defaultSecondarySortColId: 'skater',
-        elementSortProperty: 'skatingSpeed.topSpeed'
+        defaultSortDir: 'desc',
+        sortedElement: 'topSpeed',
       },
       {
         id: 'twentyTwoPlus',
         display: '22 +',
-        defaultSort: 'desc',
-        defaultSecondarySortColId: 'skater',
-        elementSortProperty: 'skatingSpeed.twentyTwoPlus'
+        defaultSortDir: 'desc',
+        sortedElement: 'twentyTwoPlus',
       },
       {
         id: 'twentyToTwentyTwo',
         display: '20 - 22',
-        defaultSort: 'desc',
-        defaultSecondarySortColId: 'skater',
-        elementSortProperty: 'skatingSpeed.twentyToTwentyTwo'
+        defaultSortDir: 'desc',
+        sortedElement: 'twentyToTwentyTwo',
       },
       {
         id: 'eighteenToTwenty',
         display: '18 - 20',
-        defaultSort: 'desc',
-        defaultSecondarySortColId: 'skater',
-        elementSortProperty: 'skatingSpeed.eighteenToTwenty'
+        defaultSortDir: 'desc',
+        sortedElement: 'eighteenToTwenty',
       }
-    ],
-    primarySortColId: 'topSpeed',
-    primarySortDir: 'desc'
-  }
+    ]
+  };
 
   ngOnInit(): void {
-    this.getSkatingData();
-  }
-
-  getSkatingData(pageElement: SkatingTableElement | undefined = undefined, pageDir: 'inc' | 'dec' | undefined = undefined): void {
-    const sortedCol = this.tableConfig.columns.filter(c => c.id === this.tableConfig.primarySortColId)[0];
-    const secondaryCol = this.tableConfig.columns.filter(c => c.id === sortedCol.defaultSecondarySortColId)[0];
-
-    const queryConstraints: QueryConstraint[] = [
-      orderBy(sortedCol.elementSortProperty, this.tableConfig.primarySortDir),
-      orderBy(secondaryCol.elementSortProperty, secondaryCol.defaultSort),
-      limit(this.tableConfig.resultsPerPage)
-    ];
-
-    if (!pageElement) {
-      queryConstraints.push(
-        limit(this.tableConfig.resultsPerPage)
-      );
-    } else {
-      const primaryPageKey = this.getPropByString(pageElement, sortedCol.elementSortProperty);
-      const secondaryPageKey = this.getPropByString(pageElement, secondaryCol.elementSortProperty);
-
-      if (pageDir === 'inc') {
-        queryConstraints.push(startAfter(primaryPageKey, secondaryPageKey));
-        queryConstraints.push(limit(this.tableConfig.resultsPerPage));
-      }
-
-      if (pageDir === 'dec') {
-        queryConstraints.push(endBefore(primaryPageKey, secondaryPageKey));
-        queryConstraints.push(limitToLast(this.tableConfig.resultsPerPage));
-      }
-    }
-
-    this.skatingTableElements$ = collectionData(
+    this.elements$ = collectionData(
       query(
-        collection(this.firestore, 'skaters'),
-        ...queryConstraints
+        collection(this.firestore, 'skater-skating-speeds'),
+        orderBy('topSpeed', 'desc')
       ),
       { idField: 'id' }
-    ) as Observable<SkatingTableElement[]>
+    ) as Observable<TableElement[]>;
 
+    this.elements$.subscribe(arr => {
+      this.elements = arr;
+    });
   }
 
-  sortColumn(id: string): void {
-    const col = this.tableConfig.columns.find(c => c.id === id);
+  sortData(column: TableColumn) {
+    let sortDir: 'asc' | 'desc' = column.defaultSortDir;
 
-    if (!col) {
-      throw Error('sortColumn called on undefined column');
+    if (column.id === this.tableConfig.sortedColumnId) {
+      sortDir = this.tableConfig.sortedColumnDir !== 'asc' ? 'asc' : 'desc';
     }
 
-    if (col.id === this.tableConfig.primarySortColId) {
-      this.tableConfig.primarySortDir = this.tableConfig.primarySortDir !== 'asc' ? 'asc' : 'desc';
-    } else {
-      this.tableConfig.primarySortColId = col.id;
-      this.tableConfig.primarySortDir = col.defaultSort;
-    }
+    this.elements = sortDir === 'asc' ?
+      this.elements.sort((a: any, b: any) => a[column.sortedElement].toString().localeCompare(b[column.sortedElement].toString(), 'en', { numeric: true })) :
+      this.elements.sort((a: any, b: any) => b[column.sortedElement].toString().localeCompare(a[column.sortedElement].toString(), 'en', { numeric: true }));
 
-    this.changePage('reset');
-  }
-
-  setMaxResults(max: number) {
-    this.tableConfig.resultsPerPage = max;
-    this.changePage('reset');
-  }
-
-  changePage(mode: 'reset' | 'inc' | 'dec', element: SkatingTableElement | undefined = undefined) {
-    switch (mode) {
-      case 'reset':
-        this.tableConfig.currentPage = 0;
-        this.getSkatingData();
-        break;
-
-      case 'inc':
-        this.tableConfig.currentPage++;
-        this.getSkatingData(element, mode)
-        break;
-
-      case 'dec':
-        this.tableConfig.currentPage--;
-        this.getSkatingData(element, mode)
-        break;
-    }
-  }
-
-  getPropByString(obj: any, propString: any) {
-    if (!propString)
-      return obj;
-
-    var prop, props = propString.split('.');
-
-    for (var i = 0, iLen = props.length - 1; i < iLen; i++) {
-      prop = props[i];
-
-      var candidate = obj[prop];
-      if (candidate !== undefined) {
-        obj = candidate;
-      } else {
-        break;
-      }
-    }
-    return obj[props[i]];
+    this.tableConfig.sortedColumnDir = sortDir;
+    this.tableConfig.sortedColumnId = column.id;
   }
 }
