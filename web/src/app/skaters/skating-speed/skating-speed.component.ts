@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit, inject } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { Firestore, collectionData, orderBy } from "@angular/fire/firestore";
 import { collection, query } from "@firebase/firestore";
+import { PaginationInstance } from "ngx-pagination";
 import { BehaviorSubject, Observable } from "rxjs";
 
 interface TableElement {
@@ -27,8 +28,7 @@ interface TableConfig {
   columns: TableColumn[],
   sortedColumnId: string,
   sortedColumnDir: 'asc' | 'desc',
-  resultsPerPage: number,
-  currentPage: number
+  pagination: PaginationInstance
 }
 
 @Component({
@@ -41,8 +41,11 @@ export class SkatingSpeedComponent implements OnInit {
   elements$: Observable<TableElement[]> = new BehaviorSubject([]);
   elements: TableElement[] = [];
   tableConfig: TableConfig = {
-    resultsPerPage: 25,
-    currentPage: 0,
+    pagination: {
+      id: 'skaterSkatingSpeeds',
+      itemsPerPage: 25,
+      currentPage: 1
+    },
     sortedColumnId: 'topSpeed',
     sortedColumnDir: 'desc',
     columns: [
