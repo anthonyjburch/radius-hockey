@@ -1,7 +1,7 @@
 <div class="container mt-3 mb-5">
     <ng-container *ngIf="elements.length; else loading">
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-sm">
                 <thead>
                     <tr>
                         <th colspan="5"></th>
@@ -9,7 +9,8 @@
                     </tr>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col" class="min-width-{{column.displayMinWidth}}" *ngFor="let column of tableConfig.columns">
+                        <th scope="col" class="min-width-{{column.displayMinWidth}}"
+                            *ngFor="let column of tableConfig.columns">
                             <span class="text-decoration-underline cursor-pointer" (click)="sortData(column)">
                                 {{column.displayText}}
                             </span>
@@ -28,44 +29,38 @@
                     </tr>
                 </thead>
                 <tbody class="table-group-divider">
-                    <tr *ngFor="let element of elements; let i = index;" scope="row">
-                        <ng-container *ngIf="i < tableConfig.resultsPerPage">
-                            <td>{{i + 1}}</td>
-                            <td>{{element.lastName}}, {{element.firstName}}</td>
-                            <td>{{element.team}}</td>
-                            <td>{{element.position}}</td>
-                            <td>{{element.topSpeed}}</td>
-                            <td>{{element.twentyTwoPlus}}</td>
-                            <td>{{element.twentyToTwentyTwo}}</td>
-                            <td>{{element.eighteenToTwenty}}</td>
-                        </ng-container>
+                    <tr *ngFor="let element of elements | paginate: tableConfig.pagination; let i = index;" scope="row">
+                        <td>{{(tableConfig.pagination.currentPage - 1) * tableConfig.pagination.itemsPerPage + i + 1}}</td>
+                        <td>{{element.lastName}}, {{element.firstName}}</td>
+                        <td>{{element.team}}</td>
+                        <td>{{element.position}}</td>
+                        <td>{{element.topSpeed}}</td>
+                        <td>{{element.twentyTwoPlus}}</td>
+                        <td>{{element.twentyToTwentyTwo}}</td>
+                        <td>{{element.eighteenToTwenty}}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="row">
+        
+        <div class="row my-3 d-none d-sm-block">
             <div class="col">
                 <div class="d-flex justify-content-between">
-                    <div class="dropdown">
-                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            Show {{tableConfig.resultsPerPage}} Results
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><button class="btn btn-link dropdown-item"
-                                    (click)="tableConfig.resultsPerPage = 25">25</button>
-                            </li>
-                            <li><button class="btn btn-link dropdown-item"
-                                    (click)="tableConfig.resultsPerPage = 100">100</button>
-                            </li>
-                            <li><button class="btn btn-link dropdown-item"
-                                    (click)="tableConfig.resultsPerPage = 500">500</button>
-                            </li>
-                            <li><button class="btn btn-link dropdown-item"
-                                    (click)="tableConfig.resultsPerPage = 1000">All</button>
-                            </li>
-                        </ul>
-                    </div>
+                    <ng-container [ngTemplateOutlet]="itemsPerPageTemplate"></ng-container>
+                    <ng-container [ngTemplateOutlet]="paginationTemplate" [ngTemplateOutletContext]="{groupSize: 'small'}"></ng-container>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-sm-none my-3">
+            <div class="row mb-3">
+                <div class="col">
+                    <ng-container [ngTemplateOutlet]="paginationTemplate"></ng-container>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <ng-container [ngTemplateOutlet]="itemsPerPageTemplate"></ng-container>
                 </div>
             </div>
         </div>
@@ -77,6 +72,42 @@
                 <span class="visually-hidden">Loading...</span>
             </div>
         </div>
+    </ng-template>
+
+    <ng-template #itemsPerPageTemplate>
+        <div class="dropdown">
+            <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Show {{tableConfig.pagination.itemsPerPage}} Results
+            </button>
+            <ul class="dropdown-menu">
+                <li><button class="btn btn-link dropdown-item"
+                        (click)="tableConfig.pagination.itemsPerPage = 25; tableConfig.pagination.currentPage = 1;">25</button>
+                </li>
+                <li><button class="btn btn-link dropdown-item"
+                        (click)="tableConfig.pagination.itemsPerPage = 100; tableConfig.pagination.currentPage = 1;">100</button>
+                </li>
+                <li><button class="btn btn-link dropdown-item"
+                        (click)="tableConfig.pagination.itemsPerPage = 500; tableConfig.pagination.currentPage = 1;">500</button>
+                </li>
+                <li><button class="btn btn-link dropdown-item"
+                        (click)="tableConfig.pagination.itemsPerPage = 1000; tableConfig.pagination.currentPage = 1;">All</button>
+                </li>
+            </ul>
+        </div>
+    </ng-template>
+
+    <ng-template #paginationTemplate let-groupSize="groupSize">
+        <pagination-template #p="paginationApi" [id]="tableConfig.pagination.id!" (pageChange)="tableConfig.pagination.currentPage= $event">
+            <div class="btn-group" [class.btn-group-sm]="groupSize === 'small'" role="group">
+                <button type="button" class="btn btn-outline-secondary" [disabled]="p.isFirstPage()" (click)="p.previous()"><i class="fa-solid fa-chevron-left"></i></button>
+                <button type="button" class="btn btn-outline-secondary" *ngFor="let page of p.pages" (click)="p.setCurrent(page.value)"
+                    [class.active]="p.getCurrent() === page.value">
+                    {{page.label}}
+                </button>
+                <button type="button" class="btn btn-outline-secondary" [disabled]="p.isLastPage()" (click)="p.next()"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </pagination-template>
     </ng-template>
 
 </div>
