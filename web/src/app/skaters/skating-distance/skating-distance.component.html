@@ -1,3 +1,12 @@
 <div class="container mt-5">
-    <h2>Coming Soon!</h2>
+    <!-- The AG Grid component -->
+    <ag-grid-angular
+    class="ag-theme-quartz"
+    [rowData]="data"
+    [columnDefs]="colDefs"
+    [domLayout]="domLayout"
+    [pagination]="true"
+    [paginationPageSizeSelector]="[25,100,500]"
+    [paginationPageSize]="25">
+    </ag-grid-angular>
 </div>
