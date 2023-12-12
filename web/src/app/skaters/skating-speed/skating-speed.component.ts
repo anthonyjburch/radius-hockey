@@ -1,102 +1,62 @@
-import { Component, OnInit, inject } from "@angular/core";
-import { Firestore, collection, collectionData, orderBy, query } from "@angular/fire/firestore";
-import { ColDef, ColGroupDef, SizeColumnsToFitGridStrategy } from "ag-grid-community";
-import { Observable } from "rxjs";
-
-interface IRow {
-  lastName: string;
-  firstName: string;
-  position: string;
-  team: string;
-  topSpeed: string;
-  twentyTwoPlus: string;
-  twentyToTwentyTwo: number;
-  eighteenToTwenty: boolean;
-}
+import { Component, OnInit, ViewEncapsulation, inject } from "@angular/core";
+import { ColDef, ColGroupDef } from "ag-grid-community";
+import { FirestoreService } from "src/app/core/firestore.service";
+import { GridService } from "src/app/core/grid.service";
 
 @Component({
   selector: 'app-skating-speed',
   templateUrl: './skating-speed.component.html',
-  styleUrls: ['./skating-speed.component.scss']
+  styleUrls: ['./skating-speed.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class SkatingSpeedComponent implements OnInit {
-  private firestore: Firestore = inject(Firestore);
-  
-  data: IRow[] = [];
+  private firestoreSvc: FirestoreService = inject(FirestoreService);
+  private gridService: GridService = inject(GridService);
 
-  autoSizeStrategy: SizeColumnsToFitGridStrategy = {
-    type: 'fitGridWidth'
-  };
-  
-  defaultColumnDef: ColDef = {
-    suppressMovable: true,
-    resizable: false
-  };
+  data: [] = [];
 
   colDefs: (ColDef | ColGroupDef)[] = [
     {
       children: [
-        {
-          headerName: 'Skater',
-          valueGetter: (params: any) => `${params?.data?.lastName}, ${params?.data?.firstName}`,
-          pinned: 'left',
-          minWidth: 150
-        },
-        {
-          field: 'position',
-          filter: true,
-          headerName: 'Pos.',
-          minWidth: 75
-        },
-        {
-          field: 'team',
-          filter: 'true',
-          minWidth: 85
-        },
+        ...this.gridService.getPlayerInfoCols(),
         {
           field: 'topSpeed',
-          cellDataType: 'number',
-          sortingOrder: ['desc', 'asc'],
-          minWidth: 100
+          minWidth: 80,
+          sortingOrder: ['desc', 'asc']
         }
       ]
     },
     {
       headerName: 'Speed Bursts (mph)',
+      headerClass: 'burst-header-background',
       children: [
         {
-          field: 'twentyTwoPlus',
           headerName: '22 +',
-          cellDataType: 'number',
-          sortingOrder: ['desc', 'asc'],
-          minWidth: 65
+          field: 'twentyTwoPlus',
+          minWidth: 80,
+          sortingOrder: ['desc', 'asc']
         },
         {
-          field: 'twentyToTwentyTwo',
           headerName: '20 - 22',
-          cellDataType: 'number',
-          sortingOrder: ['desc', 'asc'],
-          minWidth: 80
+          field: 'twentyToTwentyTwo',
+          minWidth: 80,
+          sortingOrder: ['desc', 'asc']
         },
         {
-          field: 'eighteenToTwenty',
           headerName: '18 - 20',
-          cellDataType: 'number',
-          sortingOrder: ['desc', 'asc'],
-          minWidth: 80
+          field: 'eighteenToTwenty',
+          minWidth: 80,
+          sortingOrder: ['desc', 'asc']
         }
       ]
     }
   ];
 
   ngOnInit(): void {
-    (collectionData(
-      query(
-        collection(this.firestore, 'skater-skating-speeds'),
-        orderBy('topSpeed', 'desc')
-      ), { idField: 'id' }
-    ) as Observable<IRow[]>).subscribe(data => {
-      this.data = data;
-    });
+    this.firestoreSvc
+        .getSkaterSkatingSpeeds()
+        .subscribe(data => {
+          this.data = data;
+        });
   }
 }

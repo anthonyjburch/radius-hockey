@@ -1,3 +1,20 @@
-<div class="container mt-5">
-    <h2>Coming Soon!</h2>
-</div>
+<ng-container *ngIf="!data.length; else grid">
+    <app-loading></app-loading>
+</ng-container>
+
+<ng-template #grid>
+    <div class="container my-2">
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{manpower.ddlDisplay}}
+            </button>
+            <ul class="dropdown-menu">
+                <li *ngFor="let mp of manpowerList">
+                    <button class="btn btn-link dropdown-item" (click)="onManpowerChange(mp)">{{mp.ddlDisplay}}</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <app-ag-grid-wrapper [colDefs]="colDefs" [data]="data"></app-ag-grid-wrapper>
+</ng-template>
