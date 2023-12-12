@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation, inject } from "@angular/core";
 import { Firestore, collection, collectionData, orderBy, query } from "@angular/fire/firestore";
-import { ColDef, ColGroupDef, GridReadyEvent, SizeColumnsToFitGridStrategy } from "ag-grid-community";
+import { ColDef, ColGroupDef, GridReadyEvent } from "ag-grid-community";
 import { Observable } from "rxjs";
 
 interface IRow {
@@ -37,26 +37,31 @@ export class SkatingSpeedComponent implements OnInit {
           headerName: '#',
           valueGetter: (params: any) => params.node.rowIndex + 1,
           maxWidth: 50,
-          minWidth: 50,
+          minWidth: 25,
           pinned: 'left'
         },
         {
           headerName: 'Skater',
           valueGetter: (params: any) => `${params?.data?.lastName}, ${params?.data?.firstName}`,
           minWidth: 100,
+          resizable: true,
           pinned: 'left'
         },
         {
           field: 'position',
           headerName: 'Pos.',
           filter: true,
+          minWidth: 60
         },
         {
           field: 'team',
-          filter: true
+          filter: true,
+          minWidth: 70
         },
         {
-          field: 'topSpeed'
+          field: 'topSpeed',
+          minWidth: 80,
+          sortingOrder: ['desc', 'asc']
         }
       ]
     },
@@ -66,15 +71,21 @@ export class SkatingSpeedComponent implements OnInit {
       children: [
         {
           headerName: '22 +',
-          field: 'twentyTwoPlus'
+          field: 'twentyTwoPlus',
+          minWidth: 80,
+          sortingOrder: ['desc', 'asc']
         },
         {
           headerName: '20 - 22',
-          field: 'twentyToTwentyTwo'
+          field: 'twentyToTwentyTwo',
+          minWidth: 80,
+          sortingOrder: ['desc', 'asc']
         },
         {
           headerName: '18 - 20',
-          field: 'eighteenToTwenty'
+          field: 'eighteenToTwenty',
+          minWidth: 80,
+          sortingOrder: ['desc', 'asc']
         }
       ]
     }
@@ -93,14 +104,7 @@ export class SkatingSpeedComponent implements OnInit {
 
   onResize = (event: any) => this.onGridReady(event);
 
-  // onGridReady = (event: GridReadyEvent) => event.api.sizeColumnsToFit();
   onGridReady(event: GridReadyEvent): void {
-    console.log('Grid Ready');
-    console.log(event);
     event.api.sizeColumnsToFit();
-  }
-
-  updateCols(): void {
-    this.colDefs = [];
   }
 }
