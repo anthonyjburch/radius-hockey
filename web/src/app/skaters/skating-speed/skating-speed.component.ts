@@ -30,7 +30,6 @@ export class SkatingSpeedComponent implements OnInit {
   
   defaultColumnDef: ColDef = {
     suppressMovable: true,
-    resizable: false
   };
 
   colDefs: (ColDef | ColGroupDef)[] = [
