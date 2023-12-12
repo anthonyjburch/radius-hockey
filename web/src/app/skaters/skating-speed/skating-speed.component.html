@@ -1,3 +1,7 @@
+<ng-container *ngIf="!data.length; else grid">
+    <app-loading></app-loading>
+</ng-container>
 
-
-<app-ag-grid-wrapper [colDefs]="colDefs" [data]="data"></app-ag-grid-wrapper>
+<ng-template #grid>
+    <app-ag-grid-wrapper [colDefs]="colDefs" [data]="data"></app-ag-grid-wrapper>
+</ng-template>
