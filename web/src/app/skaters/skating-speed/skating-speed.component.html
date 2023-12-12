@@ -1,13 +1,24 @@
-<div class="container mt-3 mb-5" style="height: 80vh;">
+<div class="container-fluid mt-3 mb-5 d-lg-none" style="height: 80vh;">
+    <ng-template [ngTemplateOutlet]="agGrid"></ng-template>
+</div>
+
+<div class="container mt-3 mb-5 d-none d-lg-block" style="height: 80vh;">
+    <ng-template [ngTemplateOutlet]="agGrid"></ng-template>
+</div>
+
+
+<ng-template #agGrid>
     <ag-grid-angular
-    style="height: 100%;"
+    style="width: 100%; height: 100%;"
     class="ag-theme-quartz"
     [rowData]="data"
     [defaultColDef]="defaultColumnDef"
     [columnDefs]="colDefs"
     [pagination]="true"
-    [autoSizeStrategy]="autoSizeStrategy"
+    [suppressMenuHide]="true"
     [paginationPageSizeSelector]="[25,100,500]"
-    [paginationPageSize]="25">
+    [paginationPageSize]="25"
+    (gridReady)="onGridReady($event)"
+    >
     </ag-grid-angular>
-</div>
+</ng-template>

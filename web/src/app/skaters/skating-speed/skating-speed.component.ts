@@ -1,6 +1,6 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, inject } from "@angular/core";
 import { Firestore, collection, collectionData, orderBy, query } from "@angular/fire/firestore";
-import { ColDef, ColGroupDef, SizeColumnsToFitGridStrategy } from "ag-grid-community";
+import { ColDef, ColGroupDef, GridReadyEvent, SizeColumnsToFitGridStrategy } from "ag-grid-community";
 import { Observable } from "rxjs";
 
 interface IRow {
@@ -17,72 +17,64 @@ interface IRow {
 @Component({
   selector: 'app-skating-speed',
   templateUrl: './skating-speed.component.html',
-  styleUrls: ['./skating-speed.component.scss']
+  styleUrls: ['./skating-speed.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class SkatingSpeedComponent implements OnInit {
   private firestore: Firestore = inject(Firestore);
   
   data: IRow[] = [];
 
-  autoSizeStrategy: SizeColumnsToFitGridStrategy = {
-    type: 'fitGridWidth'
-  };
-  
   defaultColumnDef: ColDef = {
     suppressMovable: true,
+    resizable: false
   };
 
   colDefs: (ColDef | ColGroupDef)[] = [
     {
       children: [
         {
+          headerName: '#',
+          valueGetter: (params: any) => params.node.rowIndex + 1,
+          maxWidth: 50,
+          minWidth: 50,
+          pinned: 'left'
+        },
+        {
           headerName: 'Skater',
           valueGetter: (params: any) => `${params?.data?.lastName}, ${params?.data?.firstName}`,
-          pinned: 'left',
-          minWidth: 150
+          minWidth: 100,
+          pinned: 'left'
         },
         {
           field: 'position',
-          filter: true,
           headerName: 'Pos.',
-          minWidth: 75
+          filter: true,
         },
         {
           field: 'team',
-          filter: 'true',
-          minWidth: 85
+          filter: true
         },
         {
-          field: 'topSpeed',
-          cellDataType: 'number',
-          sortingOrder: ['desc', 'asc'],
-          minWidth: 100
+          field: 'topSpeed'
         }
       ]
     },
     {
       headerName: 'Speed Bursts (mph)',
+      headerClass: 'burst-header-background',
       children: [
         {
-          field: 'twentyTwoPlus',
           headerName: '22 +',
-          cellDataType: 'number',
-          sortingOrder: ['desc', 'asc'],
-          minWidth: 65
+          field: 'twentyTwoPlus'
         },
         {
-          field: 'twentyToTwentyTwo',
           headerName: '20 - 22',
-          cellDataType: 'number',
-          sortingOrder: ['desc', 'asc'],
-          minWidth: 80
+          field: 'twentyToTwentyTwo'
         },
         {
-          field: 'eighteenToTwenty',
           headerName: '18 - 20',
-          cellDataType: 'number',
-          sortingOrder: ['desc', 'asc'],
-          minWidth: 80
+          field: 'eighteenToTwenty'
         }
       ]
     }
@@ -97,5 +89,18 @@ export class SkatingSpeedComponent implements OnInit {
     ) as Observable<IRow[]>).subscribe(data => {
       this.data = data;
     });
+  }
+
+  onResize = (event: any) => this.onGridReady(event);
+
+  // onGridReady = (event: GridReadyEvent) => event.api.sizeColumnsToFit();
+  onGridReady(event: GridReadyEvent): void {
+    console.log('Grid Ready');
+    console.log(event);
+    event.api.sizeColumnsToFit();
+  }
+
+  updateCols(): void {
+    this.colDefs = [];
   }
 }
