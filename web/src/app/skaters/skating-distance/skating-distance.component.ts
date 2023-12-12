@@ -6,5 +6,4 @@ import { Component } from '@angular/core';
   styleUrls: ['./skating-distance.component.scss']
 })
 export class SkatingDistanceComponent {
-
 }

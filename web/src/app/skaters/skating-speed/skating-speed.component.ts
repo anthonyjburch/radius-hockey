@@ -1,34 +1,17 @@
 import { Component, OnInit, inject } from "@angular/core";
-import { Firestore, collectionData, orderBy } from "@angular/fire/firestore";
-import { collection, query } from "@firebase/firestore";
-import { PaginationInstance } from "ngx-pagination";
-import { BehaviorSubject, Observable } from "rxjs";
+import { Firestore, collection, collectionData, orderBy, query } from "@angular/fire/firestore";
+import { ColDef, ColGroupDef, SizeColumnsToFitGridStrategy } from "ag-grid-community";
+import { Observable } from "rxjs";
 
-interface TableElement {
-  [key: string]: string | number,
-  firstName: string,
-  lastName: string,
-  position: string,
-  team: string,
-  topSpeed: number,
-  twentyTwoPlus: number
-  twentyToTwentyTwo: number,
-  eighteenToTwenty: number
-}
-
-interface TableColumn {
-  id: string,
-  displayText: string,
-  displayMinWidth: number,
-  defaultSortDir: 'asc' | 'desc',
-  sortedElement: string,
-}
-
-interface TableConfig {
-  columns: TableColumn[],
-  sortedColumnId: string,
-  sortedColumnDir: 'asc' | 'desc',
-  pagination: PaginationInstance
+interface IRow {
+  lastName: string;
+  firstName: string;
+  position: string;
+  team: string;
+  topSpeed: string;
+  twentyTwoPlus: string;
+  twentyToTwentyTwo: number;
+  eighteenToTwenty: boolean;
 }
 
 @Component({
@@ -38,95 +21,82 @@ interface TableConfig {
 })
 export class SkatingSpeedComponent implements OnInit {
   private firestore: Firestore = inject(Firestore);
-  elements$: Observable<TableElement[]> = new BehaviorSubject([]);
-  elements: TableElement[] = [];
-  tableConfig: TableConfig = {
-    pagination: {
-      id: 'skaterSkatingSpeeds',
-      itemsPerPage: 25,
-      currentPage: 1
-    },
-    sortedColumnId: 'topSpeed',
-    sortedColumnDir: 'desc',
-    columns: [
-      {
-        id: 'skater',
-        displayText: 'Skater',
-        displayMinWidth: 150,
-        defaultSortDir: 'asc',
-        sortedElement: 'lastName',
-      },
-      {
-        id: 'team',
-        displayText: 'Team',
-        displayMinWidth: 100,
-        defaultSortDir: 'asc',
-        sortedElement: 'team',
-      },
-      {
-        id: 'pos',
-        displayText: 'Pos.',
-        displayMinWidth: 100,
-        defaultSortDir: 'asc',
-        sortedElement: 'position',
-      },
-      {
-        id: 'topSpeed',
-        displayText: 'Top Speed',
-        displayMinWidth: 125,
-        defaultSortDir: 'desc',
-        sortedElement: 'topSpeed',
-      },
-      {
-        id: 'twentyTwoPlus',
-        displayText: '22 +',
-        displayMinWidth: 100,
-        defaultSortDir: 'desc',
-        sortedElement: 'twentyTwoPlus',
-      },
-      {
-        id: 'twentyToTwentyTwo',
-        displayText: '20 - 22',
-        displayMinWidth: 100,
-        defaultSortDir: 'desc',
-        sortedElement: 'twentyToTwentyTwo',
-      },
-      {
-        id: 'eighteenToTwenty',
-        displayText: '18 - 20',
-        displayMinWidth: 100,
-        defaultSortDir: 'desc',
-        sortedElement: 'eighteenToTwenty',
-      }
-    ]
+  
+  data: IRow[] = [];
+
+  autoSizeStrategy: SizeColumnsToFitGridStrategy = {
+    type: 'fitGridWidth'
+  };
+  
+  defaultColumnDef: ColDef = {
+    suppressMovable: true,
+    resizable: false
   };
 
+  colDefs: (ColDef | ColGroupDef)[] = [
+    {
+      children: [
+        {
+          headerName: 'Skater',
+          valueGetter: (params: any) => `${params?.data?.lastName}, ${params?.data?.firstName}`,
+          pinned: 'left',
+          minWidth: 150
+        },
+        {
+          field: 'position',
+          filter: true,
+          headerName: 'Pos.',
+          minWidth: 75
+        },
+        {
+          field: 'team',
+          filter: 'true',
+          minWidth: 85
+        },
+        {
+          field: 'topSpeed',
+          cellDataType: 'number',
+          sortingOrder: ['desc', 'asc'],
+          minWidth: 100
+        }
+      ]
+    },
+    {
+      headerName: 'Speed Bursts (mph)',
+      children: [
+        {
+          field: 'twentyTwoPlus',
+          headerName: '22 +',
+          cellDataType: 'number',
+          sortingOrder: ['desc', 'asc'],
+          minWidth: 65
+        },
+        {
+          field: 'twentyToTwentyTwo',
+          headerName: '20 - 22',
+          cellDataType: 'number',
+          sortingOrder: ['desc', 'asc'],
+          minWidth: 80
+        },
+        {
+          field: 'eighteenToTwenty',
+          headerName: '18 - 20',
+          cellDataType: 'number',
+          sortingOrder: ['desc', 'asc'],
+          minWidth: 80
+        }
+      ]
+    }
+  ];
+
   ngOnInit(): void {
-    this.elements$ = collectionData(
+    (collectionData(
       query(
         collection(this.firestore, 'skater-skating-speeds'),
         orderBy('topSpeed', 'desc')
-      ),
-      { idField: 'id' }
-    ) as Observable<TableElement[]>;
-
-    this.elements$.subscribe(arr => {
-      this.elements = arr;
+      ), { idField: 'id' }
+    ) as Observable<IRow[]>).subscribe(data => {
+      this.data = data;
     });
-  }
-
-  sortData(column: TableColumn) {
-    let sortDir: 'asc' | 'desc' = column.defaultSortDir;
-
-    if (column.id === this.tableConfig.sortedColumnId) {
-      sortDir = this.tableConfig.sortedColumnDir !== 'asc' ? 'asc' : 'desc';
-    }
-
-    this.elements = sortDir === 'asc' ?
-      this.elements.sort((a: any, b: any) => a[column.sortedElement].toString().localeCompare(b[column.sortedElement].toString(), 'en', { numeric: true })) :
-      this.elements.sort((a: any, b: any) => b[column.sortedElement].toString().localeCompare(a[column.sortedElement].toString(), 'en', { numeric: true }));
-
-    this.tableConfig.sortedColumnDir = sortDir;
-    this.tableConfig.sortedColumnId = column.id;
   }
 }

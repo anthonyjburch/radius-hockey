@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { NgxPaginationModule } from 'ngx-pagination';
+import { AgGridModule } from 'ag-grid-angular';
 
 import { SkatersRoutingModule } from './skaters-routing.module';
 import { SkatersComponent } from './skaters.component';
@@ -17,7 +17,7 @@ import { SkatingSpeedComponent } from './skating-speed/skating-speed.component';
   imports: [
     CommonModule,
     SkatersRoutingModule,
-    NgxPaginationModule
+    AgGridModule,
   ]
 })
 export class SkatersModule { }
