@@ -1,17 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { Firestore, collection, collectionData, orderBy, query } from '@angular/fire/firestore';
-import { ColDef, SizeColumnsToFitGridStrategy } from 'ag-grid-community';
-import { Observable } from 'rxjs';
+import { ColDef } from 'ag-grid-community';
+import { FirestoreService } from 'src/app/core/firestore.service';
+import { GridService } from 'src/app/core/grid.service';
 
-interface IRow {
-  lastName: string;
-  firstName: string;
-  position: string;
-  team: string;
-  averagePerSixty: number;
-  topPeriod: number;
-  topGame: number;
-  total: number;
+interface IManpower {
+  manpowerTbl: string,
+  ddlDisplay: string
 }
 
 @Component({
@@ -20,37 +14,33 @@ interface IRow {
   styleUrls: ['./skating-distance.component.scss']
 })
 export class SkatingDistanceComponent implements OnInit {
-  private firestore: Firestore = inject(Firestore);
+  private firestoreSvc: FirestoreService = inject(FirestoreService);
+  private gridSvc: GridService = inject(GridService);
 
-  manpower: string = 'All';
-  data: [] = [];
+  manpowerList: IManpower[] = [
+    {
+      manpowerTbl: 'all',
+      ddlDisplay: 'All Situations'
+    },
+    {
+      manpowerTbl: 'es',
+      ddlDisplay: 'Even Strength'
+    },
+    {
+      manpowerTbl: 'pp',
+      ddlDisplay: 'Power Play'
+    },
+    {
+      manpowerTbl: 'pk',
+      ddlDisplay: 'Penalty Kill'
+    }
+  ];
+  manpower: IManpower = this.manpowerList.find(m => m.manpowerTbl === 'all')!;
 
-  autoSizeStrategy: SizeColumnsToFitGridStrategy = {
-    type: 'fitGridWidth'
-  };
   
-  defaultColumnDef: ColDef = {
-    suppressMovable: true,
-  };
-
-  colDefs: ColDef<IRow>[] = [
-    {
-      headerName: 'Skater',
-      valueGetter: (params: any) => `${params?.data?.lastName}, ${params?.data?.firstName}`,
-      pinned: 'left',
-      minWidth: 150
-    },
-    {
-      field: 'position',
-      filter: true,
-      headerName: 'Pos.',
-      minWidth: 75
-    },
-    {
-      field: 'team',
-      filter: 'true',
-      minWidth: 85
-    },
+  data: [] = [];  
+  colDefs: ColDef[] = [
+    ...this.gridSvc.getPlayerInfoCols(),
     {
       field: 'total',
       sortingOrder: ['desc', 'asc'],
@@ -75,13 +65,20 @@ export class SkatingDistanceComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    (collectionData(
-      query(
-        collection(this.firestore, 'skater-skating-distances-all'),
-        orderBy('total', 'desc')
-      ), { idField: 'id' }
-    ) as Observable<[]>).subscribe(data => {
-      this.data = data;
-    });
+    this.getSkatingDistances(this.manpower);
+  }
+
+  onManpowerChange(manpower: IManpower): void {
+    this.manpower = manpower;
+    this.getSkatingDistances(this.manpower);
+  }
+
+  getSkatingDistances(manpower: IManpower): void {
+    this.data = [];
+    this.firestoreSvc
+        .getSkaterSkatingDistances(manpower.manpowerTbl)
+        .subscribe(data => {
+          this.data = data;
+        })
   }
 }

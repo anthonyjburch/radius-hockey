@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { AgGridModule } from 'ag-grid-angular';
 
 import { SkatersRoutingModule } from './skaters-routing.module';
 import { SkatersComponent } from './skaters.component';
 import { SkatingDistanceComponent } from './skating-distance/skating-distance.component';
 import { SkatingSpeedComponent } from './skating-speed/skating-speed.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -16,8 +16,8 @@ import { SkatingSpeedComponent } from './skating-speed/skating-speed.component';
   ],
   imports: [
     CommonModule,
+    SharedModule,
     SkatersRoutingModule,
-    AgGridModule,
   ]
 })
 export class SkatersModule { }

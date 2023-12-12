@@ -1,29 +1,14 @@
-<div class="container mt-3 mb-5" style="height: 80vh;">
-    <div class="row mb-2">
-        <div class="col">
-            <div class="dropdown">
-                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Strength: {{manpower}}
-                </button>
-                <ul class="dropdown-menu">
-                    <li><button class="btn btn-link dropdown-item" (click)="manpower = 'All'">All</button></li>
-                    <li><button class="btn btn-link dropdown-item" (click)="manpower = 'ES'">Even Strength</button></li>
-                    <li><button class="btn btn-link dropdown-item" (click)="manpower = 'PP'">Power Play</button></li>
-                    <li><button class="btn btn-link dropdown-item" (click)="manpower = 'PK'">Penalty Kill</button></li>
-                </ul>
-            </div>
-        </div>
+<div class="container my-2">
+    <div class="dropdown">
+        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{manpower.ddlDisplay}}
+        </button>
+        <ul class="dropdown-menu">
+            <li *ngFor="let mp of manpowerList">
+                <button class="btn btn-link dropdown-item" (click)="onManpowerChange(mp)">{{mp.ddlDisplay}}</button>
+            </li>
+        </ul>
     </div>
-
-    <ag-grid-angular
-    style="height: 100%;"
-    class="ag-theme-quartz"
-    [rowData]="data"
-    [defaultColDef]="defaultColumnDef"
-    [columnDefs]="colDefs"
-    [pagination]="true"
-    [autoSizeStrategy]="autoSizeStrategy"
-    [paginationPageSizeSelector]="[25,100,500]"
-    [paginationPageSize]="25">
-    </ag-grid-angular>
 </div>
+
+<app-ag-grid-wrapper [colDefs]="colDefs" [data]="data"></app-ag-grid-wrapper>
