@@ -1,0 +1,65 @@
+main:
+  params: [args]
+  steps:
+    - init:
+        assign:
+          - execution_results: {}
+          - execution_results.success: {}
+          - execution_results.failure: {}
+    - get_skater_ids:
+        call: http.get
+        args:
+          url: ${getSkatersUrl}
+          auth:
+            type: OIDC
+        result: skaters
+    - update_skater_shot_speeds:
+        parallel:
+          shared: [execution_results]
+          concurrency_limit: 100
+          for:
+            value: skater
+            in: $${skaters.body}
+            steps:
+              - iterate:
+                  try:
+                    steps:
+                      - send_update_request:
+                          call: http.post
+                          args:
+                            url: ${updateSkaterShotUrl}
+                            auth:
+                              type: OIDC
+                            body:
+                              season: $${args.season}
+                              stage: $${args.stage}
+                              id: $${skater.id}
+                          result: execution_result
+                      - save_successful_execution:
+                          assign:
+                            - execution_results.success[string(skater.id)]: "OK"
+                  retry:
+                    predicate: $${server_error_predicate}
+                    max_retries: 10
+                    backoff:
+                      initial_delay: 2
+                      max_delay: 300
+                      multiplier: 2
+                  except:
+                    as: e
+                    steps:
+                      - save_failed_execution:
+                          assign:
+                            - execution_results.failure[string(skater.id)]: "ERROR"
+    - return_execution_results:
+        return: $${execution_results}
+
+server_error_predicate:
+  params: [e]
+  steps:
+    - check_code:
+        switch:
+          - condition: $${e.code == 500}
+            return: true
+    - otherwise:
+        return: false

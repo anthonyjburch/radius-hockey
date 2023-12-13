@@ -34,3 +34,12 @@ main:
                         stage: $${args.stage}
                         manpower: $${manpower}
                   retry: $${http.default_retry}
+      - update_skater_shot_speeds:
+          try:
+            call: googleapis.workflowexecutions.v1.projects.locations.workflows.executions.run
+            args:
+              workflow_id: ${updateSkaterSkatingSpeedsWorkflowId}
+              argument:
+                season: $${args.season}
+                stage: $${args.stage}
+          retry: $${http.default_retry}
