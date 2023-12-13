@@ -79,6 +79,6 @@ export class SkatingDistanceComponent implements OnInit {
         .getSkaterSkatingDistances(manpower.manpowerTbl)
         .subscribe(data => {
           this.data = data;
-        })
+        });
   }
 }

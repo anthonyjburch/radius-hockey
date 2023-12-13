@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ColDef, ColGroupDef, GridReadyEvent } from 'ag-grid-community';
+import { ColDef, ColGroupDef, FilterChangedEvent, GridReadyEvent, SortChangedEvent } from 'ag-grid-community';
 
 @Component({
   selector: 'app-ag-grid-wrapper',
@@ -16,5 +16,13 @@ export class AgGridWrapperComponent {
 
   onGridReady(event: GridReadyEvent): void {
     event.api.sizeColumnsToFit();
+  }
+
+  onSortChanged(event: SortChangedEvent): void {
+    event.api.refreshCells();
+  }
+
+  onFilterChanged(event: FilterChangedEvent): void {
+    event.api.refreshCells();
   }
 }
