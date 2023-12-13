@@ -34,7 +34,7 @@ resource "google_workflows_workflow" "update_skater_shot_speeds" {
   service_account = var.service_account_email
   source_contents = templatefile("./workflows/updateSkaterShotSpeeds.yml", {
     getSkatersUrl               = data.google_cloudfunctions2_function.get_skaters.url
-    updateSkaterShotpeedUrl = data.google_cloudfunctions2_function.update_skater_shot_speed.url
+    updateSkaterShotSpeedUrl = data.google_cloudfunctions2_function.update_skater_shot_speed.url
   })
 }
 

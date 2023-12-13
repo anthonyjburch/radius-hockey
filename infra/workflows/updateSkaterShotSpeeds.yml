@@ -27,7 +27,7 @@ main:
                       - send_update_request:
                           call: http.post
                           args:
-                            url: ${updateSkaterShotUrl}
+                            url: ${updateSkaterShotSpeedUrl}
                             auth:
                               type: OIDC
                             body:
