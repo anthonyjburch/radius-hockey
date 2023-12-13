@@ -20,3 +20,8 @@ data "google_cloudfunctions2_function" "update_skater_skating_distance" {
   name     = "updateSkaterSkatingDistance"
   location = data.google_client_config.config.region
 }
+
+data "google_cloudfunctions2_function" "update_skater_shot_speed" {
+  name     = "updateSkaterShotSpeed"
+  location = data.google_client_config.config.region
+}
