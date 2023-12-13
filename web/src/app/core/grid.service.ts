@@ -26,12 +26,20 @@ export class GridService {
         field: 'position',
         headerName: 'Pos.',
         filter: true,
-        minWidth: 60
+        filterParams: {
+          filterOptions: ['equals', 'notEqual'],
+          buttons: ['apply', 'reset']
+        },
+        minWidth: 60,
       },
       {
         field: 'team',
         filter: true,
-        minWidth: 70
+        minWidth: 70,
+        filterParams: {
+          filterOptions: ['equals', 'notEqual'],
+          buttons: ['apply', 'reset']
+        },
       }
     ];
   }

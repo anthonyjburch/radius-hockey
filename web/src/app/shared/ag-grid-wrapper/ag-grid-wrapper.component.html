@@ -18,6 +18,8 @@
     [paginationPageSizeSelector]="[25,100,500]"
     [paginationPageSize]="25"
     (gridReady)="onGridReady($event)"
+    (sortChanged)="onSortChanged($event)"
+    (filterChanged)="onFilterChanged($event)"
     >
     </ag-grid-angular>
 </ng-template>

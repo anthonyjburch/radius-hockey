@@ -25,18 +25,22 @@ export class ShotSpeedComponent implements OnInit {
     },
     {
       field: 'oneHundredPlus',
+      headerName: '100 +',
       sortingOrder: ['desc', 'asc']
     },
     {
       field: 'ninetyToOneHundred',
+      headerName: '90 - 100',
       sortingOrder: ['desc', 'asc']
     },
     {
       field: 'eightyToNinety',
+      headerName: '80 - 90',
       sortingOrder: ['desc', 'asc']
     },
     {
       field: 'seventyToEighty',
+      headerName: '70-80',
       sortingOrder: ['desc', 'asc']
     }
   ];
