@@ -25,4 +25,13 @@ export class FirestoreService {
       ), { idField: 'id' }
     ) as Observable<[]>);
   }
+
+  getSkaterShotSpeed(): Observable<[]> {
+    return (collectionData(
+      query(
+        collection(this.firestore, 'skater-shot-speeds'),
+        orderBy('topSpeed', 'desc')
+      ), { idField: 'id' }
+    ) as Observable<[]>);
+  }
 }

@@ -10,8 +10,9 @@ export class GridService {
       {
         headerName: '#',
         valueGetter: (params: any) => params.node.rowIndex + 1,
-        maxWidth: 50,
-        minWidth: 25,
+        minWidth: 60,
+        maxWidth: 60,
+        resizable: false,
         pinned: 'left'
       },
       {
