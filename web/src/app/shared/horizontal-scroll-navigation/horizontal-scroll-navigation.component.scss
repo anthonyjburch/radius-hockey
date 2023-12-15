@@ -1,0 +1,8 @@
+.nav {
+    flex-wrap: nowrap;
+    overflow-x: auto
+}
+
+.nav-underline .nav-link.active {
+    font-weight: unset;
+}
