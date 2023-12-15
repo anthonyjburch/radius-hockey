@@ -4,6 +4,9 @@ import { AgGridWrapperComponent } from './ag-grid-wrapper/ag-grid-wrapper.compon
 
 import { AgGridModule } from 'ag-grid-angular';
 import { LoadingComponent } from './loading/loading.component';
+import { MainNavigationComponent } from './main-navigation/main-navigation.component';
+import { RouterModule } from '@angular/router';
+import { HorizontalScrollNavigationComponent } from './horizontal-scroll-navigation/horizontal-scroll-navigation.component';
 
 
 
@@ -11,15 +14,20 @@ import { LoadingComponent } from './loading/loading.component';
 @NgModule({
   declarations: [
     AgGridWrapperComponent,
-    LoadingComponent
+    LoadingComponent,
+    MainNavigationComponent,
+    HorizontalScrollNavigationComponent
   ],
   imports: [
+    RouterModule,
     CommonModule,
     AgGridModule
   ],
   exports: [
     AgGridWrapperComponent,
-    LoadingComponent
+    LoadingComponent,
+    MainNavigationComponent,
+    HorizontalScrollNavigationComponent
   ]
 })
 export class SharedModule { }

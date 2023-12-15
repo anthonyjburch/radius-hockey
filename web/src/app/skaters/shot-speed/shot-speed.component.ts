@@ -17,31 +17,37 @@ export class ShotSpeedComponent implements OnInit {
     ...this.gridSvc.getPlayerInfoCols(),
     {
       field: 'topSpeed',
-      sortingOrder: ['desc', 'asc']
+      sortingOrder: ['desc', 'asc'],
+      minWidth: 100
     },
     {
       field: 'avgSpeed',
-      sortingOrder: ['desc', 'asc']
+      sortingOrder: ['desc', 'asc'],
+      minWidth: 100
     },
     {
       field: 'oneHundredPlus',
       headerName: '100 +',
-      sortingOrder: ['desc', 'asc']
+      sortingOrder: ['desc', 'asc'],
+      minWidth: 75
     },
     {
       field: 'ninetyToOneHundred',
       headerName: '90 - 100',
-      sortingOrder: ['desc', 'asc']
+      sortingOrder: ['desc', 'asc'],
+      minWidth: 90
     },
     {
       field: 'eightyToNinety',
       headerName: '80 - 90',
-      sortingOrder: ['desc', 'asc']
+      sortingOrder: ['desc', 'asc'],
+      minWidth: 90
     },
     {
       field: 'seventyToEighty',
       headerName: '70-80',
-      sortingOrder: ['desc', 'asc']
+      sortingOrder: ['desc', 'asc'],
+      minWidth: 90
     }
   ];
 

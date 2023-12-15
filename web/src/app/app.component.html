@@ -1,31 +1,17 @@
-<div class='content'>
-  <nav class="navbar navbar-expand bg-body-primary">
-    <div class="container">
-      <a class="navbar-brand" [routerLink]="['/']">Radius Hockey</a>
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/skaters']" routerLinkActive="active text-underline">Skaters</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/goalies']" routerLinkActive="active">Goalies</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/teams']" routerLinkActive="active">Teams</a>
-          </li>
-        </ul>
-    </div>
-  </nav>
+<div class="content">
+  <app-main-navigation></app-main-navigation>
+
   <router-outlet></router-outlet>
 </div>
 
 <footer>
   <nav class="footer navbar navbar-expand bg-body-secondary">
     <div class="container">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <span class="btn-link nav-link">&copy; 2023 Radius Hockey</span>
-          </li>
-        </ul>
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <span class="btn-link nav-link">&copy; 2023 Radius Hockey</span>
+        </li>
+      </ul>
     </div>
   </nav>
 </footer>

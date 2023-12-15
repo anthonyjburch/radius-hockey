@@ -1,0 +1,9 @@
+<div class="sticky-top bg-secondary">
+    <div class="container">
+        <ul class="nav nav-underline">
+            <li class="nav-item" *ngFor="let link of links">
+                <a class="nav-link link-light text-nowrap" [routerLink]="[link.path]" routerLinkActive="active">{{link.displayText}}</a>
+            </li>
+        </ul>
+    </div>
+</div>
